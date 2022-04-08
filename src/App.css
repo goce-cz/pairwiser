@@ -69,3 +69,7 @@
 .comparison button.item {
   width: 200px;
 }
+
+.selected {
+  outline: 2px solid green;
+}

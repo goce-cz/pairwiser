@@ -8,7 +8,7 @@ export interface ItemPair {
   score?: number
 }
 
-export const calculatePairId = (itemA: string, itemB: string) => itemA.localeCompare(itemB) > 1
+export const calculatePairId = (itemA: string, itemB: string) => itemA.localeCompare(itemB) > 0
   ? `${itemA}\0${itemB}`
   : `${itemB}\0${itemA}`
 
