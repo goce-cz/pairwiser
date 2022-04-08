@@ -2,8 +2,8 @@ import { getItems, getPairs, ItemPair, LocatedPair, writePairs } from './sheets-
 import { createContext, FC, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useGoogleAPIData } from './GoogleAPIProvider'
 import { findMissingPairs } from './find-missing-pairs'
-import { ITEM_SHEET } from './config'
 import { debounce } from 'lodash'
+import { useParams } from 'react-router-dom'
 
 export type DataUpdateFunction = (pairId: string, score: number) => void
 
@@ -15,7 +15,6 @@ export interface Data {
 }
 
 export interface ContextData extends Data {
-  sheetName: string
   updateScore: DataUpdateFunction
 }
 
@@ -57,13 +56,17 @@ const beforeUnloadListener = (event: BeforeUnloadEvent) => {
 export const DataProvider: FC = ({
   children
 }) => {
+  const {
+    spreadsheetId,
+    itemSheetName
+  } = useParams() as { spreadsheetId: string, itemSheetName: string }
   const { loginResponse } = useGoogleAPIData()
-  const sheetName = useMemo(
+  const pairSheetName = useMemo(
     () => {
       const userName = emailPattern.exec(loginResponse.profileObj.email)![1]
-      return `${ITEM_SHEET} - pairs - ${userName}`
+      return `${itemSheetName} - pairs - ${userName}`
     },
-    [loginResponse]
+    [loginResponse, itemSheetName]
   )
 
   const [data, setData] = useState<Data>()
@@ -99,7 +102,7 @@ export const DataProvider: FC = ({
             score
           }
         })
-        await writePairs(sheetName, pairsToWrite)
+        await writePairs(spreadsheetId, pairSheetName, pairsToWrite)
 
         setUpdates({})
         setData(oldData => syncState(pairsToWrite, oldData!))
@@ -109,7 +112,7 @@ export const DataProvider: FC = ({
       }
     },
     // eslint-disable-next-line
-    [updates, data, sheetName]
+    [updates, data, pairSheetName, spreadsheetId]
   )
 
   const hasPendingUpdates = useMemo(() => !!Object.keys(updates).length, [updates])
@@ -150,8 +153,8 @@ export const DataProvider: FC = ({
   useEffect(
     () => {
       (async () => {
-        const items = await getItems()
-        const existingPairs = await getPairs(sheetName)
+        const items = await getItems(spreadsheetId, itemSheetName)
+        const existingPairs = await getPairs(spreadsheetId, pairSheetName)
         const existingPairsById = pairsById(existingPairs)
         const missingPairs = findMissingPairs(items, existingPairsById)
         missingPairs.sort(comparePairs)
@@ -163,7 +166,7 @@ export const DataProvider: FC = ({
         })
       })().catch(console.error)
     },
-    [sheetName]
+    [pairSheetName, spreadsheetId, itemSheetName]
   )
 
   if (!data) {
@@ -171,7 +174,7 @@ export const DataProvider: FC = ({
   }
 
   return (
-    <DataContext.Provider value={{ ...data, updateScore: handleUpdate, sheetName }}>
+    <DataContext.Provider value={{ ...data, updateScore: handleUpdate }}>
       <button onClick={handleSave} disabled={saving} className="save">Save</button>
       {children}
     </DataContext.Provider>

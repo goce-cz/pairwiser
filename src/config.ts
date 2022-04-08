@@ -8,6 +8,3 @@ export const DISCOVERY_DOCS = ['https://sheets.googleapis.com/$discovery/rest?ve
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
 export const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
-
-export const SPREADSHEET_ID = process.env.REACT_APP_SPREADSHEET_ID!
-export const ITEM_SHEET = process.env.REACT_APP_ITEM_SHEET!
