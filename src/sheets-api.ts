@@ -20,7 +20,7 @@ export async function getItems () {
   })
 
   const range: { values: [string][] } = response.result
-  return range.values.map(row => row[0])
+  return (range.values ?? []).map(row => row[0])
 }
 
 export async function getPairs (sheetName: string): Promise<ItemPair[]> {
@@ -31,7 +31,7 @@ export async function getPairs (sheetName: string): Promise<ItemPair[]> {
   })
 
   const range: { values: [string, string, number | undefined][] } = response.result
-  return range.values.map(([itemA, itemB, score], index) => ({
+  return (range.values ?? []).map(([itemA, itemB, score], index) => ({
     id: calculatePairId(itemA, itemB),
     row: 2 + index,
     itemA,
