@@ -1,26 +1,18 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import './App.css'
+import { API_KEY, CLIENT_ID, SCOPES, DISCOVERY_DOCS } from './config'
+import { GoogleAPIProvider } from './GoogleAPIProvider'
+import { CompareMissing } from './CompareMissing'
+import { DataProvider } from './DataProvider'
 
-function App() {
+function App () {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <GoogleAPIProvider clientId={CLIENT_ID} apiKey={API_KEY} discoveryDocs={DISCOVERY_DOCS} scope={SCOPES}>
+      <DataProvider>
+        <CompareMissing/>
+      </DataProvider>
+    </GoogleAPIProvider>
+  )
 }
 
-export default App;
+export default App

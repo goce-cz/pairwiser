@@ -39,5 +39,15 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <script>
+      window.googleAPIClientLoaded = false;
+      window.handleGoogleAPIClientLoaded = function () {
+        window.googleAPIClientLoaded = true;
+      };
+    </script>
+    <script async defer src="https://apis.google.com/js/api.js"
+            onload="this.onload=function(){}; window.handleGoogleAPIClientLoaded()"
+            onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script>
   </body>
 </html>
