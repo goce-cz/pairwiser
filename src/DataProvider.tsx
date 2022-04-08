@@ -27,6 +27,13 @@ const emailPattern = /^(.+)@/
 
 const pairsById = (existingPairs: ItemPair[]) => new Map(existingPairs.map(pair => [pair.id, pair]))
 
+const comparePairs = (a: ItemPair, b: ItemPair): number => {
+  const itemAResult = a.itemA.localeCompare(b.itemA)
+  return itemAResult === 0
+    ? a.itemB.localeCompare(b.itemB)
+    : itemAResult
+}
+
 function syncState (updatedPairs: LocatedPair[], data: Data): Data {
   const { existingPairsById, missingPairs } = data!
   const newExistingPairsById = new Map(existingPairsById)
@@ -146,7 +153,7 @@ export const DataProvider: FC = ({
         const existingPairs = await getPairs(sheetName)
         const existingPairsById = pairsById(existingPairs)
         const missingPairs = findMissingPairs(items, existingPairsById)
-        missingPairs.sort(() => Math.random() - 0.5)
+        missingPairs.sort(comparePairs)
         setData({
           items,
           existingPairsById,
@@ -162,8 +169,10 @@ export const DataProvider: FC = ({
     return <div>Loading...</div>
   }
 
-  return <DataContext.Provider value={{ ...data, updateScore: handleUpdate, sheetName }}>
-    <button onClick={handleSave} disabled={saving}>Save</button>
-    {children}</DataContext.Provider>
-
+  return (
+    <DataContext.Provider value={{ ...data, updateScore: handleUpdate, sheetName }}>
+      <button onClick={handleSave} disabled={saving} className="save">Save</button>
+      {children}
+    </DataContext.Provider>
+  )
 }

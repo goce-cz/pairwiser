@@ -72,24 +72,37 @@ export const GoogleAPIProvider: FC<GoogleAPIProviderProps> = ({
 
   if (!loginResponse) {
     return (
-      <GoogleLogin
-        clientId={clientId}
-        onSuccess={handleLogin}
-        cookiePolicy="single_host_origin"
-        scope={scope}
-        isSignedIn
-      />
+      <div className="apiProvider">
+        <div className="header">
+          <GoogleLogin
+            className="loginButton"
+            clientId={clientId}
+            onSuccess={handleLogin}
+            cookiePolicy="single_host_origin"
+            scope={scope}
+            isSignedIn
+          />
+        </div>
+      </div>
     )
   }
 
   return (
-    <div>
-      <div><GoogleLogout clientId={clientId} onLogoutSuccess={handleLogout}/></div>
-      {
-        ready
-          ? <GoogleAPIContext.Provider value={{ loginResponse }}>{children}</GoogleAPIContext.Provider>
-          : <div>Loading...</div>
-      }
+    <div className="apiProvider">
+      <div className="header">
+        <GoogleLogout
+          className="logioutButton"
+          clientId={clientId}
+          onLogoutSuccess={handleLogout}
+        />
+      </div>
+      <div className="body">
+        {
+          ready
+            ? <GoogleAPIContext.Provider value={{ loginResponse }}>{children}</GoogleAPIContext.Provider>
+            : <div>Loading...</div>
+        }
+      </div>
     </div>
   )
 }
